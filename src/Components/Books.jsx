@@ -1,21 +1,16 @@
-import React from 'react';
-import gql from 'graphql-tag';
+import React, { useState } from 'react';
 import { Query } from 'react-apollo';
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-const QUERY = gql`
-  {
-    books {
-      title
-      author
-      price
-      bookId
-    }
-  }
-`;
+import Article from './Article';
+import { queries } from '../constants';
 
-const Books = () => {
+const Books = ({ history: { push } }) => {
+  const [totalSelected, setTotalSelected] = useState(0);
+
   return (
-    <Query query={QUERY}>
+    <Query query={queries.GET_BOOKS}>
       {({ loading, error, data }) => {
         if (loading) {
           return <p>loading...</p>;
@@ -24,13 +19,25 @@ const Books = () => {
           return <p>Error</p>;
         }
 
-        console.log(data);
+        const { books } = data;
 
         return (
-          <div>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugiat placeat adipisci iure
-            corrupti quae amet ipsa perspiciatis. Ut praesentium aliquam magni, tenetur minus
-            nesciunt mollitia ea deleniti dolor. Voluptas, quaerat?
+          <div className="books">
+            <h1 className="h1">Selected: {totalSelected}</h1>
+            <div className="books-list-wrapper">
+              <div className="books-list">
+                {books.map(book => {
+                  return (
+                    <Article
+                      book={book}
+                      push={push}
+                      key={book.bookId}
+                      onCheckboxChange={setTotalSelected}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
         );
       }}
@@ -38,8 +45,10 @@ const Books = () => {
   );
 };
 
-Books.defaultProps = {};
+Books.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired
+};
 
-Books.propTypes = {};
-
-export default Books;
+export default withRouter(Books);

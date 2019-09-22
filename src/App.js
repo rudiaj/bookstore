@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import './styles/style.scss';
 
-import { Books, Main } from './Components';
+import { Books, Main, EditBook, CreateBook } from './Components';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4567/graphql'
@@ -17,9 +17,8 @@ const App = () => {
       <Router>
         <Main>
           <Route exact path="/" component={Books} />
-          <Route exact path="/books/:id" component={Books} />
-          <Route exact path="/books/edit/:id" component={Books} />
-          <Route exact path="/books/create" component={Books} />
+          <Route exact path="/create" component={CreateBook} />
+          <Route exact path="/books/edit/:id" component={EditBook} />
         </Main>
       </Router>
     </ApolloProvider>
